@@ -1,0 +1,340 @@
+/* Google Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-primary: 'Inter', Arial, sans-serif;
+  --bg-color: #f0f2f5;
+  --card-bg-color: #ffffff;
+  --text-color-primary: #2c3e50;
+  --text-color-secondary: #555555;
+  --text-color-muted: #7f8c8d;
+  --border-color: #e0e0e0;
+  --accent-color: #3498db;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --shadow-hover-color: rgba(0, 0, 0, 0.12);
+  --success-bg: #e6ffed;
+  --success-text: #28a745;
+  --warning-bg: #fff3cd;
+  --warning-text: #ffc107;
+  --danger-bg: #f8d7da;
+  --danger-text: #dc3545;
+  --loader-color: var(--accent-color);
+  --border-radius-md: 12px;
+  --border-radius-sm: 8px;
+  --transition-speed: 0.3s;
+}
+
+/* Global Reset and Base Styles */
+html {
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: var(--font-primary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color-secondary);
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+/* Card base style */
+.card {
+  background-color: var(--card-bg-color);
+  padding: 25px;
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  margin-bottom: 40px;
+  transition: box-shadow var(--transition-speed) ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px var(--shadow-hover-color);
+}
+
+.card-title {
+  color: var(--text-color-primary);
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.7em; /* Slightly increased */
+  font-weight: 600;
+}
+
+/* Header styles */
+header.card { /* Header'ı da card yapısına dahil edelim */
+  text-align: center;
+  padding: 35px 20px; /* Increased padding */
+}
+
+header .card-title { /* h1 için */
+  margin-bottom: 10px;
+  font-size: 2.4em; /* Slightly increased */
+  font-weight: 700;
+}
+
+header p {
+  color: var(--text-color-secondary);
+  margin-top: 0;
+  font-size: 1.1em;
+}
+
+/* Algorithm info styles */
+.algorithm-info ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.algorithm-info li {
+  margin-bottom: 12px;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.algorithm-info li strong {
+  color: var(--accent-color);
+}
+
+/* User table card styles */
+.user-table-card .card-title { /* h2 için */
+  margin-bottom: 25px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+th,
+td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+th {
+  background-color: #f8f9fa; /* Keeping this specific for table header */
+  font-weight: 600;
+  color: var(--text-color-primary);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: background-color var(--transition-speed) ease;
+}
+
+th:hover {
+  background-color: #e9ecef;
+}
+
+.sort-indicator {
+  margin-left: 8px;
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+th:hover .sort-indicator {
+  opacity: 1;
+}
+
+tbody tr {
+  transition: background-color var(--transition-speed) ease;
+}
+tbody tr:hover {
+  background-color: #f5f5f5; /* Keeping this specific */
+}
+
+tbody td {
+  color: var(--text-color-secondary);
+}
+
+/* Time display and accuracy styles */
+.time-value {
+  font-weight: 500;
+  color: var(--text-color-primary); /* Make dates stand out a bit */
+}
+
+.time-ago {
+  font-size: 0.8em;
+  color: var(--text-color-muted);
+  margin-top: 5px;
+  display: block;
+}
+
+.accuracy-indicator {
+  margin-top: 8px;
+  font-weight: 600; /* Bolder */
+  font-size: 0.82em; /* Slightly smaller */
+  padding: 4px 8px; /* More padding */
+  border-radius: var(--border-radius-sm);
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+
+.accuracy-indicator.high { background-color: var(--success-bg); color: var(--success-text); }
+.accuracy-indicator.medium { background-color: var(--warning-bg); color: var(--warning-text); }
+.accuracy-indicator.low { background-color: var(--danger-bg); color: var(--danger-text); }
+
+
+/* Loading and error states */
+.status-message-container { /* Wrapper for loading/error */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  margin-top: 30px;
+  background-color: var(--card-bg-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  text-align: center;
+}
+
+.status-message-container p {
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+.error p {
+  color: var(--danger-text);
+  font-weight: 500;
+}
+.loading p {
+  color: var(--accent-color);
+}
+
+/* Simple Spinner Animation */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0,0,0,0.1);
+  border-left-color: var(--loader-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .container {
+    padding: 20px 15px;
+  }
+}
+
+@media (max-width: 992px) { /* Tabletler */
+  header .card-title { font-size: 2.1em; }
+  header p { font-size: 1em; }
+  .card-title { font-size: 1.5em; }
+  
+  th, td {
+    padding: 12px 12px;
+  }
+}
+
+@media (max-width: 768px) { /* Büyük mobiller */
+  .container {
+    margin-top: 20px;
+    padding: 15px 10px;
+  }
+  .card { padding: 20px; margin-bottom: 30px; }
+  header.card { padding: 25px 15px; }
+  header .card-title { font-size: 1.9em; }
+  
+  th, td {
+    padding: 10px 8px;
+    font-size: 0.9em;
+  }
+  
+  .time-value { font-size: 0.95em; }
+  .time-ago { font-size: 0.75em; }
+  .accuracy-indicator { font-size: 0.8em; }
+}
+
+@media (max-width: 576px) { /* Küçük mobiller */
+  header .card-title { font-size: 1.7em; }
+  header p { font-size: 0.9em; }
+  .card-title { font-size: 1.4em; }
+  
+  table {
+    font-size: 0.85em;
+  }
+  th, td {
+    padding: 8px 6px;
+  }
+  .time-value { font-size: 0.9em; }
+  .status-message-container p { font-size: 1.1em; }
+  .spinner { width: 40px; height: 40px; border-width: 4px;}
+}
+/* App.css dosyasına eklenecek stiller */
+
+/* En İyi Tahmin sütunu vurgulaması */
+.highlighted-column {
+  background-color: rgba(144, 238, 144, 0.15);
+  border-left: 2px solid #4CAF50;
+  border-right: 2px solid #4CAF50;
+}
+
+th.highlighted-column {
+  background-color: rgba(76, 175, 80, 0.2);
+  font-weight: bold;
+}
+
+/* En iyi algoritma ismi stili */
+.best-algorithm {
+  margin-top: 5px;
+  font-weight: bold;
+  font-size: 0.85em;
+  color: #1976d2;
+}
+
+/* Güvenilirlik yüzdesi stilini düzeltme */
+.accuracy-indicator {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.accuracy-indicator.high {
+  background-color: rgba(46, 125, 50, 0.2);
+  color: #2e7d32;
+}
+
+.accuracy-indicator.medium {
+  background-color: rgba(237, 108, 2, 0.2);
+  color: #ed6c02;
+}
+
+.accuracy-indicator.low {
+  background-color: rgba(211, 47, 47, 0.2);
+  color: #d32f2f;
+}
