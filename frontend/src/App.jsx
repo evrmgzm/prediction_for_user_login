@@ -8,9 +8,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortConfig, setSortConfig] = useState({
-    key: 'name', // Varsayılan sıralama anahtarı
+    key: 'name',
     direction: 'ascending'
   });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
     fetchData();
@@ -26,9 +28,7 @@ function App() {
       }
       
       const data = await response.json();
-      // API'den gelen veriyi kontrol et (yinelenme sorunu için)
-      // console.log("API'den gelen kullanıcı verisi:", JSON.stringify(data.users, null, 2)); 
-      setUsers(data.users || []); // data.users yoksa boş dizi ata
+      setUsers(data.users || []);
       setLoading(false);
     } catch (err) {
       setError(err.message);
@@ -68,7 +68,6 @@ function App() {
     }
   };
 
-  // Algoritma adını Türkçe göstermek için
   const getAlgorithmName = (algorithmKey) => {
     const names = {
       'smart_interval': 'Akıllı Aralık Analizi',
@@ -88,11 +87,34 @@ function App() {
   };
 
   const getSortedItems = () => {
-    // users state'inin bir dizi olduğundan emin ol
     const sortableItems = Array.isArray(users) ? [...users] : []; 
-    if (sortConfig.key && sortableItems.length > 0) {
-      sortableItems.sort((a, b) => {
-        // a veya b'nin null/undefined olabileceğini ve sortConfig.key'in varlığını kontrol et
+    
+    // Filter items based on search term
+    const filteredItems = sortableItems.filter(user => {
+      if (!user) return false;
+      
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        (user.name && user.name.toLowerCase().includes(searchLower)) ||
+        (user.id && user.id.toString().includes(searchLower))
+      );
+    });
+    
+    // Filter by tab
+    const tabFilteredItems = activeTab === 'all' 
+      ? filteredItems 
+      : filteredItems.filter(user => {
+          if (!user || !user.predictions || !user.predictions.best_reliability) return false;
+          
+          const reliability = user.predictions.best_reliability;
+          if (activeTab === 'high') return reliability >= 0.8;
+          if (activeTab === 'medium') return reliability >= 0.5 && reliability < 0.8;
+          if (activeTab === 'low') return reliability < 0.5;
+          return true;
+        });
+    
+    if (sortConfig.key && tabFilteredItems.length > 0) {
+      tabFilteredItems.sort((a, b) => {
         const valA = a && a[sortConfig.key] !== undefined ? a[sortConfig.key] : '';
         const valB = b && b[sortConfig.key] !== undefined ? b[sortConfig.key] : '';
 
@@ -105,7 +127,7 @@ function App() {
         return 0;
       });
     }
-    return sortableItems;
+    return tabFilteredItems;
   };
   
   const algorithmDescriptions = {
@@ -114,134 +136,247 @@ function App() {
     dynamic_patterns: "Dinamik Örüntü Analizi: Kullanıcının giriş zamanlarını farklı zaman ölçeklerinde analiz ederek, kişiselleştirilmiş tahmin yapar."
   };
 
+  const handleRefresh = () => {
+    fetchData();
+  };
+
+  const getTruncatedCellContent = (content) => {
+    return { __html: content.length > 20 ? `${content.substring(0, 20)}...` : content };
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   if (loading) {
-    return <div className="container"><div className="loading">Veriler yükleniyor...</div></div>;
+    return (
+      <div className="container">
+        <div className="status-message-container loading">
+          <div className="spinner"></div>
+          <p>Veriler yükleniyor...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="container"><div className="error">Hata: {error}</div></div>;
+    return (
+      <div className="container">
+        <div className="status-message-container error">
+          <div className="error-icon">❌</div>
+          <p>Hata: {error}</p>
+          <button className="retry-button" onClick={handleRefresh}>
+            Tekrar Dene
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  const sortedUsers = getSortedItems(); // Sıralanmış kullanıcıları al
+  const sortedUsers = getSortedItems();
 
   return (
-    <div className="container">
-      <header>
-        <h1>Kullanıcı Giriş Tahmin Sistemi</h1>
-        <p>Bu uygulama, kullanıcıların geçmiş giriş davranışlarını analiz ederek bir sonraki olası giriş zamanlarını tahmin eder.</p>
-      </header>
-      
-      <div className="algorithm-info">
-        <h2>Geliştirilmiş Tahmin Algoritmaları</h2>
-        <ul>
-          {Object.entries(algorithmDescriptions).map(([key, description]) => (
-            <li key={key}>
-              <strong>{description.split(':')[0]}:</strong> {description.split(':')[1]}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="user-table-card">
-        <h2>Kullanıcı Tahminleri</h2>
-        <div className="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th onClick={() => requestSort('id')}>
-                  Kullanıcı ID
-                  {sortConfig.key === 'id' && (
-                    <span className="sort-indicator">{sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}</span>
-                  )}
-                </th>
-                <th onClick={() => requestSort('name')}>
-                  Kullanıcı Adı
-                  {sortConfig.key === 'name' && (
-                    <span className="sort-indicator">{sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}</span>
-                  )}
-                </th>
-                <th>Son Giriş</th>
-                <th className="highlighted-column">En İyi Tahmin</th>
-                <th>Akıllı Aralık Analizi</th>
-                <th>Periyodik Örüntü Analizi</th>
-                <th>Dinamik Örüntü Analizi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(sortedUsers) && sortedUsers.length > 0 ? (
-                sortedUsers.map((user) => (
-                  user && user.id ? (
-                    <tr key={user.id}>
-                      <td>{user.id}</td>
-                      <td>{user.name}</td>
-                      <td>
-                        <div className="time-value">{formatDate(user.last_login)}</div>
-                        <div className="time-ago">{getTimeFromNow(user.last_login)}</div>
-                      </td>
-                      <td className="highlighted-column">
-                        <div className="time-value">{formatDate(user.predictions?.best_prediction)}</div>
-                        <div className="time-ago">{getTimeFromNow(user.predictions?.best_prediction)}</div>
-                        {user.predictions?.best_prediction && (
-                          <>
-                            <div className={`accuracy-indicator ${
-                              getReliabilityScore(user.predictions.best_prediction, user.predictions.best_reliability).score === 'Yüksek' ? 'high' : 
-                              getReliabilityScore(user.predictions.best_prediction, user.predictions.best_reliability).score === 'Orta' ? 'medium' : 'low'}`}>
-                              Güvenilirlik: {getReliabilityScore(user.predictions.best_prediction, user.predictions.best_reliability).score} 
-                              ({Math.round(user.predictions.best_reliability * 100)}%)
-                            </div>
-                            <div className="best-algorithm">
-                              {getAlgorithmName(user.predictions.best_algorithm)}
-                            </div>
-                          </>
-                        )}
-                      </td>
-                      <td>
-                        <div className="time-value">{formatDate(user.predictions?.smart_interval)}</div>
-                        <div className="time-ago">{getTimeFromNow(user.predictions?.smart_interval)}</div>
-                        {user.predictions?.smart_interval && user.predictions?.reliability && (
-                          <div 
-                            className={`accuracy-indicator ${getReliabilityScore(user.predictions.smart_interval, user.predictions.reliability.smart_interval).score === 'Yüksek' ? 'high' : 
-                                      getReliabilityScore(user.predictions.smart_interval, user.predictions.reliability.smart_interval).score === 'Orta' ? 'medium' : 'low'}`}
-                          >
-                            Güvenilirlik: {getReliabilityScore(user.predictions.smart_interval, user.predictions.reliability.smart_interval).score}
-                          </div>
-                        )}
-                      </td>
-                      <td>
-                        <div className="time-value">{formatDate(user.predictions?.periodicity)}</div>
-                        <div className="time-ago">{getTimeFromNow(user.predictions?.periodicity)}</div>
-                        {user.predictions?.periodicity && user.predictions?.reliability && (
-                          <div 
-                            className={`accuracy-indicator ${getReliabilityScore(user.predictions.periodicity, user.predictions.reliability.periodicity).score === 'Yüksek' ? 'high' : 
-                                      getReliabilityScore(user.predictions.periodicity, user.predictions.reliability.periodicity).score === 'Orta' ? 'medium' : 'low'}`}
-                          >
-                            Güvenilirlik: {getReliabilityScore(user.predictions.periodicity, user.predictions.reliability.periodicity).score}
-                          </div>
-                        )}
-                      </td>
-                      <td>
-                        <div className="time-value">{formatDate(user.predictions?.dynamic_patterns)}</div>
-                        <div className="time-ago">{getTimeFromNow(user.predictions?.dynamic_patterns)}</div>
-                        {user.predictions?.dynamic_patterns && user.predictions?.reliability && (
-                          <div 
-                            className={`accuracy-indicator ${getReliabilityScore(user.predictions.dynamic_patterns, user.predictions.reliability.dynamic_patterns).score === 'Yüksek' ? 'high' : 
-                                      getReliabilityScore(user.predictions.dynamic_patterns, user.predictions.reliability.dynamic_patterns).score === 'Orta' ? 'medium' : 'low'}`}
-                          >
-                            Güvenilirlik: {getReliabilityScore(user.predictions.dynamic_patterns, user.predictions.reliability.dynamic_patterns).score}
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ) : null
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" style={{ textAlign: 'center' }}>Görüntülenecek kullanıcı bulunamadı.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+    <div className="app-container">
+      <div className="container">
+        <header className="card">
+          <h1 className="card-title">Kullanıcı Giriş Tahmin Sistemi</h1>
+          <p>Bu uygulama, kullanıcıların geçmiş giriş davranışlarını analiz ederek bir sonraki olası giriş zamanlarını tahmin eder.</p>
+        </header>
+        
+        <div className="card algorithm-info">
+          <h2 className="card-title">Geliştirilmiş Tahmin Algoritmaları</h2>
+          <ul>
+            {Object.entries(algorithmDescriptions).map(([key, description]) => (
+              <li key={key}>
+                <strong>{description.split(':')[0]}:</strong> {description.split(':')[1]}
+              </li>
+            ))}
+          </ul>
         </div>
+
+        <div className="card user-table-card">
+          <div className="table-header">
+            <h2 className="card-title">Kullanıcı Tahminleri</h2>
+            <div className="table-actions">
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Kullanıcı ara..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="search-input"
+                />
+                {searchTerm && (
+                  <button 
+                    className="clear-search" 
+                    onClick={() => setSearchTerm('')}
+                    aria-label="Aramayı temizle"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              <button className="refresh-button" onClick={handleRefresh} aria-label="Yenile">
+                ↻
+              </button>
+            </div>
+          </div>
+          
+          <div className="tabs">
+            <button 
+              className={`tab ${activeTab === 'all' ? 'active' : ''}`}
+              onClick={() => handleTabChange('all')}
+            >
+              Tümü
+            </button>
+            <button 
+              className={`tab ${activeTab === 'high' ? 'active' : ''}`}
+              onClick={() => handleTabChange('high')}
+            >
+              Yüksek Güvenilirlik
+            </button>
+            <button 
+              className={`tab ${activeTab === 'medium' ? 'active' : ''}`}
+              onClick={() => handleTabChange('medium')}
+            >
+              Orta Güvenilirlik
+            </button>
+            <button 
+              className={`tab ${activeTab === 'low' ? 'active' : ''}`}
+              onClick={() => handleTabChange('low')}
+            >
+              Düşük Güvenilirlik
+            </button>
+          </div>
+          
+          {sortedUsers.length > 0 ? (
+            <div className="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th onClick={() => requestSort('id')} className="sortable-header">
+                      Kullanıcı ID
+                      {sortConfig.key === 'id' && (
+                        <span className="sort-indicator">{sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}</span>
+                      )}
+                    </th>
+                    <th onClick={() => requestSort('name')} className="sortable-header">
+                      Kullanıcı Adı
+                      {sortConfig.key === 'name' && (
+                        <span className="sort-indicator">{sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}</span>
+                      )}
+                    </th>
+                    <th>Son Giriş</th>
+                    <th className="highlighted-column">En İyi Tahmin</th>
+                    <th className="collapsible-column">Akıllı Aralık</th>
+                    <th className="collapsible-column">Periyodik Örüntü</th>
+                    <th className="collapsible-column">Dinamik Örüntü</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedUsers.map((user) => (
+                    user && user.id ? (
+                      <tr key={user.id}>
+                        <td data-label="ID">{user.id}</td>
+                        <td data-label="Kullanıcı">{user.name}</td>
+                        <td data-label="Son Giriş">
+                          <div className="cell-content">
+                            <div className="time-value">{formatDate(user.last_login)}</div>
+                            <div className="time-ago">{getTimeFromNow(user.last_login)}</div>
+                          </div>
+                        </td>
+                        <td data-label="En İyi Tahmin" className="highlighted-column">
+                          <div className="cell-content">
+                            <div className="time-value">{formatDate(user.predictions?.best_prediction)}</div>
+                            <div className="time-ago">{getTimeFromNow(user.predictions?.best_prediction)}</div>
+                            {user.predictions?.best_prediction && (
+                              <>
+                                <div className={`accuracy-indicator ${
+                                  getReliabilityScore(user.predictions.best_prediction, user.predictions.best_reliability).score === 'Yüksek' ? 'high' : 
+                                  getReliabilityScore(user.predictions.best_prediction, user.predictions.best_reliability).score === 'Orta' ? 'medium' : 'low'}`}>
+                                  {getReliabilityScore(user.predictions.best_prediction, user.predictions.best_reliability).score} 
+                                  ({Math.round(user.predictions.best_reliability * 100)}%)
+                                </div>
+                                <div className="best-algorithm">
+                                  {getAlgorithmName(user.predictions.best_algorithm)}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                        <td data-label="Akıllı Aralık" className="collapsible-column">
+                          <div className="cell-content">
+                            <div className="time-value">{formatDate(user.predictions?.smart_interval)}</div>
+                            <div className="time-ago">{getTimeFromNow(user.predictions?.smart_interval)}</div>
+                            {user.predictions?.smart_interval && user.predictions?.reliability && (
+                              <div 
+                                className={`accuracy-indicator ${getReliabilityScore(user.predictions.smart_interval, user.predictions.reliability.smart_interval).score === 'Yüksek' ? 'high' : 
+                                          getReliabilityScore(user.predictions.smart_interval, user.predictions.reliability.smart_interval).score === 'Orta' ? 'medium' : 'low'}`}
+                              >
+                                {getReliabilityScore(user.predictions.smart_interval, user.predictions.reliability.smart_interval).score}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td data-label="Periyodik Örüntü" className="collapsible-column">
+                          <div className="cell-content">
+                            <div className="time-value">{formatDate(user.predictions?.periodicity)}</div>
+                            <div className="time-ago">{getTimeFromNow(user.predictions?.periodicity)}</div>
+                            {user.predictions?.periodicity && user.predictions?.reliability && (
+                              <div 
+                                className={`accuracy-indicator ${getReliabilityScore(user.predictions.periodicity, user.predictions.reliability.periodicity).score === 'Yüksek' ? 'high' : 
+                                          getReliabilityScore(user.predictions.periodicity, user.predictions.reliability.periodicity).score === 'Orta' ? 'medium' : 'low'}`}
+                              >
+                                {getReliabilityScore(user.predictions.periodicity, user.predictions.reliability.periodicity).score}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td data-label="Dinamik Örüntü" className="collapsible-column">
+                          <div className="cell-content">
+                            <div className="time-value">{formatDate(user.predictions?.dynamic_patterns)}</div>
+                            <div className="time-ago">{getTimeFromNow(user.predictions?.dynamic_patterns)}</div>
+                            {user.predictions?.dynamic_patterns && user.predictions?.reliability && (
+                              <div 
+                                className={`accuracy-indicator ${getReliabilityScore(user.predictions.dynamic_patterns, user.predictions.reliability.dynamic_patterns).score === 'Yüksek' ? 'high' : 
+                                          getReliabilityScore(user.predictions.dynamic_patterns, user.predictions.reliability.dynamic_patterns).score === 'Orta' ? 'medium' : 'low'}`}
+                              >
+                                {getReliabilityScore(user.predictions.dynamic_patterns, user.predictions.reliability.dynamic_patterns).score}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>{searchTerm ? 'Arama kriterlerine uygun kullanıcı bulunamadı.' : 'Görüntülenecek kullanıcı bulunamadı.'}</p>
+              {searchTerm && (
+                <button className="clear-filter-button" onClick={() => setSearchTerm('')}>
+                  Aramayı Temizle
+                </button>
+              )}
+            </div>
+          )}
+          
+          <div className="table-footer">
+            <p className="record-count">
+              Toplam: <span>{sortedUsers.length}</span> kullanıcı {searchTerm && 'filtrelendi'}
+            </p>
+          </div>
+        </div>
+        
+        <footer className="footer-info">
+          <p>© 2025 Kullanıcı Giriş Tahmin Sistemi</p>
+        </footer>
       </div>
     </div>
   );

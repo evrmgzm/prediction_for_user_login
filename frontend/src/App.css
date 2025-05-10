@@ -1,24 +1,27 @@
 /* Google Font Import */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
   --font-primary: 'Inter', Arial, sans-serif;
-  --bg-color: #f0f2f5;
+  --bg-color: #f5f7fa;
   --card-bg-color: #ffffff;
   --text-color-primary: #2c3e50;
-  --text-color-secondary: #555555;
-  --text-color-muted: #7f8c8d;
-  --border-color: #e0e0e0;
-  --accent-color: #3498db;
+  --text-color-secondary: #4a5568;
+  --text-color-muted: #718096;
+  --border-color: #e2e8f0;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: #dbeafe;
   --shadow-color: rgba(0, 0, 0, 0.08);
   --shadow-hover-color: rgba(0, 0, 0, 0.12);
-  --success-bg: #e6ffed;
-  --success-text: #28a745;
-  --warning-bg: #fff3cd;
-  --warning-text: #ffc107;
-  --danger-bg: #f8d7da;
-  --danger-text: #dc3545;
+  --success-bg: #dcfce7;
+  --success-text: #16a34a;
+  --warning-bg: #fef3c7;
+  --warning-text: #d97706;
+  --danger-bg: #fee2e2;
+  --danger-text: #dc2626;
   --loader-color: var(--accent-color);
+  --border-radius-lg: 16px;
   --border-radius-md: 12px;
   --border-radius-sm: 8px;
   --transition-speed: 0.3s;
@@ -28,30 +31,46 @@
 html {
   box-sizing: border-box;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 *,
 *::before,
 *::after {
   box-sizing: inherit;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   font-family: var(--font-primary);
   line-height: 1.6;
-  margin: 0;
-  padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color-secondary);
   width: 100%;
   overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .container {
   width: 100%;
   max-width: 1400px;
-  margin: 30px auto;
+  margin: 0 auto;
   padding: 20px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-primary);
+  transition: all var(--transition-speed) ease;
 }
 
 /* Card base style */
@@ -60,8 +79,9 @@ body {
   padding: 25px;
   border-radius: var(--border-radius-md);
   box-shadow: 0 4px 12px var(--shadow-color);
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   transition: box-shadow var(--transition-speed) ease;
+  border: 1px solid var(--border-color);
 }
 
 .card:hover {
@@ -72,26 +92,33 @@ body {
   color: var(--text-color-primary);
   margin-top: 0;
   margin-bottom: 20px;
-  font-size: 1.7em; /* Slightly increased */
+  font-size: 1.7em;
   font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 /* Header styles */
-header.card { /* Header'ı da card yapısına dahil edelim */
+header.card {
   text-align: center;
-  padding: 35px 20px; /* Increased padding */
+  padding: 35px 20px;
 }
 
-header .card-title { /* h1 için */
+header .card-title {
   margin-bottom: 10px;
-  font-size: 2.4em; /* Slightly increased */
+  font-size: 2.4em;
   font-weight: 700;
+  background-image: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 header p {
   color: var(--text-color-secondary);
   margin-top: 0;
   font-size: 1.1em;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* Algorithm info styles */
@@ -110,15 +137,117 @@ header p {
   color: var(--accent-color);
 }
 
+/* Table header with search and actions */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.table-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  padding: 10px 15px;
+  padding-right: 35px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-primary);
+  font-size: 0.9em;
+  width: 250px;
+  transition: all var(--transition-speed) ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-color-muted);
+  font-size: 14px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.refresh-button {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all var(--transition-speed) ease;
+}
+
+.refresh-button:hover {
+  background-color: var(--accent-hover);
+  transform: rotate(180deg);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  padding: 8px 16px;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color-secondary);
+  font-size: 0.9em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tab.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.tab:hover:not(.active) {
+  background-color: var(--border-color);
+}
+
 /* User table card styles */
-.user-table-card .card-title { /* h2 için */
+.user-table-card .card-title {
   margin-bottom: 25px;
 }
 
 .table-responsive {
   width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
 }
 
 table {
@@ -136,16 +265,19 @@ td {
 }
 
 th {
-  background-color: #f8f9fa; /* Keeping this specific for table header */
+  background-color: #f8f9fa;
   font-weight: 600;
   color: var(--text-color-primary);
-  cursor: pointer;
   position: relative;
   white-space: nowrap;
   transition: background-color var(--transition-speed) ease;
 }
 
-th:hover {
+.sortable-header {
+  cursor: pointer;
+}
+
+.sortable-header:hover {
   background-color: #e9ecef;
 }
 
@@ -155,51 +287,128 @@ th:hover {
   opacity: 0.7;
 }
 
-th:hover .sort-indicator {
+.sortable-header:hover .sort-indicator {
   opacity: 1;
 }
 
 tbody tr {
   transition: background-color var(--transition-speed) ease;
 }
+
 tbody tr:hover {
-  background-color: #f5f5f5; /* Keeping this specific */
+  background-color: #f5f5f5;
 }
 
 tbody td {
   color: var(--text-color-secondary);
 }
 
+/* Cell content */
+.cell-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 /* Time display and accuracy styles */
 .time-value {
   font-weight: 500;
-  color: var(--text-color-primary); /* Make dates stand out a bit */
+  color: var(--text-color-primary);
 }
 
 .time-ago {
   font-size: 0.8em;
   color: var(--text-color-muted);
-  margin-top: 5px;
   display: block;
 }
 
 .accuracy-indicator {
   margin-top: 8px;
-  font-weight: 600; /* Bolder */
-  font-size: 0.82em; /* Slightly smaller */
-  padding: 4px 8px; /* More padding */
+  font-weight: 600;
+  font-size: 0.82em;
+  padding: 4px 8px;
   border-radius: var(--border-radius-sm);
   display: inline-block;
   letter-spacing: 0.5px;
 }
 
-.accuracy-indicator.high { background-color: var(--success-bg); color: var(--success-text); }
-.accuracy-indicator.medium { background-color: var(--warning-bg); color: var(--warning-text); }
-.accuracy-indicator.low { background-color: var(--danger-bg); color: var(--danger-text); }
+.accuracy-indicator.high { 
+  background-color: var(--success-bg); 
+  color: var(--success-text); 
+}
 
+.accuracy-indicator.medium { 
+  background-color: var(--warning-bg); 
+  color: var(--warning-text); 
+}
+
+.accuracy-indicator.low { 
+  background-color: var(--danger-bg); 
+  color: var(--danger-text); 
+}
+
+/* Best algorithm style */
+.best-algorithm {
+  margin-top: 5px;
+  font-weight: bold;
+  font-size: 0.85em;
+  color: var(--accent-color);
+}
+
+/* Highlighted column styles */
+.highlighted-column {
+  background-color: rgba(59, 130, 246, 0.05);
+  border-left: 2px solid var(--accent-color);
+  border-right: 2px solid var(--accent-color);
+}
+
+th.highlighted-column {
+  background-color: rgba(59, 130, 246, 0.1);
+  font-weight: bold;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  background-color: #f9fafb;
+  border-radius: var(--border-radius-sm);
+}
+
+.empty-state p {
+  color: var(--text-color-muted);
+  margin-bottom: 15px;
+}
+
+.clear-filter-button {
+  padding: 8px 16px;
+  background-color: var(--accent-light);
+  color: var(--accent-color);
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.clear-filter-button:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Table footer */
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: var(--text-color-muted);
+}
+
+.record-count span {
+  font-weight: 600;
+  color: var(--text-color-primary);
+}
 
 /* Loading and error states */
-.status-message-container { /* Wrapper for loading/error */
+.status-message-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -213,128 +422,34 @@ tbody td {
 }
 
 .status-message-container p {
-    font-size: 1.2em;
-    margin-top: 20px;
+  font-size: 1.2em;
+  margin-top: 20px;
+}
+
+.error-icon {
+  font-size: 2.5em;
+  color: var(--danger-text);
 }
 
 .error p {
   color: var(--danger-text);
   font-weight: 500;
 }
+
 .loading p {
   color: var(--accent-color);
 }
 
-/* Simple Spinner Animation */
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid rgba(0,0,0,0.1);
-  border-left-color: var(--loader-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-  .container {
-    padding: 20px 15px;
-  }
-}
-
-@media (max-width: 992px) { /* Tabletler */
-  header .card-title { font-size: 2.1em; }
-  header p { font-size: 1em; }
-  .card-title { font-size: 1.5em; }
-  
-  th, td {
-    padding: 12px 12px;
-  }
-}
-
-@media (max-width: 768px) { /* Büyük mobiller */
-  .container {
-    margin-top: 20px;
-    padding: 15px 10px;
-  }
-  .card { padding: 20px; margin-bottom: 30px; }
-  header.card { padding: 25px 15px; }
-  header .card-title { font-size: 1.9em; }
-  
-  th, td {
-    padding: 10px 8px;
-    font-size: 0.9em;
-  }
-  
-  .time-value { font-size: 0.95em; }
-  .time-ago { font-size: 0.75em; }
-  .accuracy-indicator { font-size: 0.8em; }
-}
-
-@media (max-width: 576px) { /* Küçük mobiller */
-  header .card-title { font-size: 1.7em; }
-  header p { font-size: 0.9em; }
-  .card-title { font-size: 1.4em; }
-  
-  table {
-    font-size: 0.85em;
-  }
-  th, td {
-    padding: 8px 6px;
-  }
-  .time-value { font-size: 0.9em; }
-  .status-message-container p { font-size: 1.1em; }
-  .spinner { width: 40px; height: 40px; border-width: 4px;}
-}
-/* App.css dosyasına eklenecek stiller */
-
-/* En İyi Tahmin sütunu vurgulaması */
-.highlighted-column {
-  background-color: rgba(144, 238, 144, 0.15);
-  border-left: 2px solid #4CAF50;
-  border-right: 2px solid #4CAF50;
-}
-
-th.highlighted-column {
-  background-color: rgba(76, 175, 80, 0.2);
-  font-weight: bold;
-}
-
-/* En iyi algoritma ismi stili */
-.best-algorithm {
-  margin-top: 5px;
-  font-weight: bold;
-  font-size: 0.85em;
-  color: #1976d2;
-}
-
-/* Güvenilirlik yüzdesi stilini düzeltme */
-.accuracy-indicator {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.85em;
-  margin-top: 5px;
+.retry-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: var(--border-radius-sm);
   font-weight: 500;
+  transition: background-color var(--transition-speed) ease;
 }
 
-.accuracy-indicator.high {
-  background-color: rgba(46, 125, 50, 0.2);
-  color: #2e7d32;
-}
-
-.accuracy-indicator.medium {
-  background-color: rgba(237, 108, 2, 0.2);
-  color: #ed6c02;
-}
-
-.accuracy-indicator.low {
-  background-color: rgba(211, 47, 47, 0.2);
-  color: #d32f2f;
+.retry-button:hover {
+  background-color: var(--accent-hover);
 }
