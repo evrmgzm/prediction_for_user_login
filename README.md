@@ -15,7 +15,7 @@ Bu proje, kullanıcıların geçmiş login (giriş) verilerini analiz ederek bir
 - Arama ve sıralama işlevleri
 - Kapsamlı hata yönetimi
 - Yenileme butonu ile veri güncelleme
-
+- Sistemin temasına göre dark veya normal mod özelliği 
 ---
 
 ## 🧠 Kullanılan Tahmin Algoritmaları
