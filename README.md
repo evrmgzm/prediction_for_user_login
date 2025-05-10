@@ -89,6 +89,4 @@ kullanici-giris-tahmin/
 └── package.json
 ```
 
-#### Uygulamaya buradan ulaşabilirsiniz.
-
-https://prediction-for-user-login.vercel.app
+#### Uygulamaya buradan ulaşabilirsiniz. `[http://localhost:8000/index.php](https://prediction-for-user-login.vercel.app)`
