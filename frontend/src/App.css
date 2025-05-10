@@ -777,7 +777,7 @@ body.dark-mode .record-count span {
   tbody tr {
     margin-bottom: 20px;
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--border-radius-md);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     background-color: var(--card-bg-color); /* Ensure rows use card background */
   }
@@ -841,7 +841,22 @@ body.dark-mode .record-count span {
 }
 
 /* Removed @media (prefers-color-scheme: dark) block as styles are now handled by body.dark-mode */
-
+/* Orta Boy Ekranlar İçin (Tablet) */
+@media (min-width: 769px) and (max-width: 1024px) { /* 992px yerine 1024px daha yaygın bir breakpoint */
+  .collapsible-column {
+    /* Bu ekran boyutunda gizlenecek sütunlar varsa */
+    /* display: none; */
+  }
+  .card {
+    padding: 20px;
+  }
+  .container {
+    padding: 20px;
+  }
+  .search-input {
+    width: 220px; /* Orta boy ekranlar için arama çubuğu genişliği */
+  }
+}
 /* Animation for table rows */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -849,7 +864,7 @@ body.dark-mode .record-count span {
 }
 
 tbody tr {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.35s ease-out forwards; /* forwards ile animasyon sonunda kalır */
 }
 
 /* Custom animation for refresh button */
@@ -861,4 +876,15 @@ tbody tr {
 
 .refresh-button:active {
   animation: pulse 0.3s ease-in-out;
+}
+
+/* Odaklanma stilleri için genel bir iyileştirme */
+*:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm); /* Odak çerçevesine de radius ver */
+}
+/* Input ve buttonlar için default outline'ı kaldırıyoruz, çünkü focus-visible ile yöneteceğiz */
+input:focus, button:focus {
+  outline: none;
 }
