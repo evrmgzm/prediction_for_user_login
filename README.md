@@ -61,3 +61,34 @@ Bu proje, kullanıcıların geçmiş login (giriş) verilerini analiz ederek bir
 git clone https://github.com/kullanici/kullanici-giris-tahmin.git
 cd kullanici-giris-tahmin
 ```
+### 3. Frontend Kurulumu (React)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+### 4. Backend Kurulumu (PHP)
+
+```bash
+cd backend
+php -S localhost:8000
+```
+### 5. Proje Yapısı
+
+```bash
+kullanici-giris-tahmin/
+├── backend/
+│   └── index.php
+├── frontend/
+│   ├── App.jsx
+│   ├── main.jsx
+│   ├── App.css
+│   └── ...
+├── README.md
+└── package.json
+```
+
+#### Uygulamaya buradan ulaşabilirsiniz.
+
+https://prediction-for-user-login.vercel.app
