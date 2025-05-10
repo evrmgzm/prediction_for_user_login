@@ -89,13 +89,21 @@ kullanici-giris-tahmin/
 └── package.json
 ```
 #### 6. Ekran görüntüleri
-![image](https://github.com/user-attachments/assets/2784f9fe-e9c0-4fbf-827c-912ed57dff47)
+![white](https://github.com/user-attachments/assets/93d96b97-4418-4004-9f1e-20117c6dcf53)
 ---
-![image](https://github.com/user-attachments/assets/e7097810-3de5-41d6-b677-4a61ea8fe09f)
+![dark](https://github.com/user-attachments/assets/12b2a7fb-e628-41e0-8738-62b90f02cc6b)
 ---
-![image](https://github.com/user-attachments/assets/b96e4791-9761-4fcb-8d25-764b0cba4e70)
+![theme](https://github.com/user-attachments/assets/3f98287b-77a1-424b-ab60-ef07845e3ea8)
 ---
-![image](https://github.com/user-attachments/assets/f1f95109-5c40-404d-9298-5e992f03fbd3)
+![screen](https://github.com/user-attachments/assets/d044d110-13dc-4a3b-b3bd-ae714fbd8226)
+---
+![image](https://github.com/user-attachments/assets/549f0799-b615-4c43-b806-0ecb7a2103a4)
+---
+![image](https://github.com/user-attachments/assets/ba3a124c-5687-4855-897d-0c178f86012c)
+---
+![image](https://github.com/user-attachments/assets/a2c2aff4-7d86-4d83-a11f-eb59f94f3a66)
+---
+![image](https://github.com/user-attachments/assets/fd008d9f-4ca6-4f2c-8de0-13e215ee68f5)
 
 
 #### Uygulamaya buradan ulaşabilirsiniz : https://prediction-for-user-login.vercel.app
