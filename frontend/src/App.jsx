@@ -14,6 +14,30 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
 
+  // Karanlık mod state'i
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode !== null) {
+      return JSON.parse(savedMode);
+    }
+    // Kayıtlı tercih yoksa sistem tercihini kontrol et
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // Karanlık mod class'ını body'e eklemek ve tercihi kaydetmek için useEffect
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prevMode => !prevMode);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -89,7 +113,6 @@ function App() {
   const getSortedItems = () => {
     const sortableItems = Array.isArray(users) ? [...users] : []; 
     
-    // Filter items based on search term
     const filteredItems = sortableItems.filter(user => {
       if (!user) return false;
       
@@ -100,7 +123,6 @@ function App() {
       );
     });
     
-    // Filter by tab
     const tabFilteredItems = activeTab === 'all' 
       ? filteredItems 
       : filteredItems.filter(user => {
@@ -183,8 +205,18 @@ function App() {
     <div className="app-container">
       <div className="container">
         <header className="card">
-          <h1 className="card-title">Kullanıcı Giriş Tahmin Sistemi</h1>
-          <p>Bu uygulama, kullanıcıların geçmiş giriş davranışlarını analiz ederek bir sonraki olası giriş zamanlarını tahmin eder.</p>
+          <div className="header-text-content">
+            <h1 className="card-title">Kullanıcı Giriş Tahmin Sistemi</h1>
+            <p>Bu uygulama, kullanıcıların geçmiş giriş davranışlarını analiz ederek bir sonraki olası giriş zamanlarını tahmin eder.</p>
+          </div>
+          <button 
+            onClick={toggleDarkMode} 
+            className="dark-mode-toggle"
+            aria-label={isDarkMode ? "Açık moda geç" : "Koyu moda geç"}
+            title={isDarkMode ? "Açık moda geç" : "Koyu moda geç"}
+          >
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
         </header>
         
         <div className="card algorithm-info">

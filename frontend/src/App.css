@@ -27,6 +27,21 @@
   --transition-speed: 0.3s;
 }
 
+/* Dark Mode Variables */
+body.dark-mode {
+  --bg-color: #1a1a2e;
+  --card-bg-color: #16213e;
+  --text-color-primary: #e2e8f0;
+  --text-color-secondary: #cbd5e0;
+  --text-color-muted: #a0aec0;
+  --border-color: #2d3748;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-hover-color: rgba(0, 0, 0, 0.4);
+  --success-bg: rgba(22, 163, 74, 0.2);
+  --warning-bg: rgba(217, 119, 6, 0.2);
+  --danger-bg: rgba(220, 38, 38, 0.2);
+}
+
 /* Global Reset and Base Styles */
 html {
   box-sizing: border-box;
@@ -52,6 +67,7 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; /* Smooth theme transition for body */
 }
 
 .app-container {
@@ -79,13 +95,18 @@ button {
 
 /* Spinner for loading */
 .spinner {
-  border: 4px solid rgba(59, 130, 246, 0.2);
+  border: 4px solid rgba(59, 130, 246, 0.2); /* Lightened for dark mode contrast */
   border-radius: 50%;
-  border-top: 4px solid var(--accent-color);
+  border-top: 4px solid var(--loader-color); /* Uses variable for theme compatibility */
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
 }
+body.dark-mode .spinner {
+  border: 4px solid rgba(226, 232, 240, 0.2); /* Adjusted for dark background */
+  border-top-color: var(--accent-color); /* Ensure accent color is used */
+}
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
@@ -99,7 +120,7 @@ button {
   border-radius: var(--border-radius-md);
   box-shadow: 0 4px 12px var(--shadow-color);
   margin-bottom: 30px;
-  transition: box-shadow var(--transition-speed) ease, transform var(--transition-speed) ease;
+  transition: box-shadow var(--transition-speed) ease, transform var(--transition-speed) ease, background-color var(--transition-speed) ease;
   border: 1px solid var(--border-color);
   width: 100%;
 }
@@ -120,10 +141,18 @@ button {
 
 /* Header styles */
 header.card {
-  text-align: center;
   padding: 35px 20px;
   background-image: linear-gradient(to right, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  display: flex; /* Added for button alignment */
+  justify-content: space-between; /* Added */
+  align-items: center; /* Added */
 }
+
+.header-text-content { /* Wrapper for title and p */
+  text-align: center;
+  flex-grow: 1; /* Allows text to take space, pushing button to the side */
+}
+
 
 header .card-title {
   margin-bottom: 15px;
@@ -143,6 +172,36 @@ header p {
   margin: 0 auto;
 }
 
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+  background-color: var(--card-bg-color); /* Use card background for button */
+  color: var(--text-color-primary); /* Use primary text color for icon */
+  border: 1px solid var(--border-color);
+  border-radius: 50%; /* Make it round */
+  width: 44px;
+  height: 44px;
+  font-size: 1.6rem; /* Adjust icon size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, transform var(--transition-speed) ease, color var(--transition-speed) ease;
+  margin-left: 20px; /* Space from text content */
+  flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.dark-mode-toggle:hover {
+  background-color: var(--bg-color); /* Use main bg-color for hover for contrast */
+  border-color: var(--accent-color);
+  transform: scale(1.1) rotate(15deg);
+}
+
+.dark-mode-toggle:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+
 /* Algorithm info styles */
 .algorithm-info {
   position: relative;
@@ -160,6 +219,10 @@ header p {
   border-radius: 50%;
   z-index: 0;
 }
+body.dark-mode .algorithm-info::before {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); /* Slightly more visible in dark mode */
+}
+
 
 .algorithm-info .card-title {
   position: relative;
@@ -215,12 +278,22 @@ header p {
   font-size: 0.9em;
   width: 250px;
   transition: all var(--transition-speed) ease;
+  background-color: var(--card-bg-color); /* Ensure it uses themed background */
+  color: var(--text-color-primary); /* Ensure themed text color */
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px var(--accent-light);
+}
+body.dark-mode .search-input:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); /* Darker accent light for dark mode */
+}
+
+
+.search-input::placeholder {
+    color: var(--text-color-muted);
 }
 
 .clear-search {
@@ -283,7 +356,7 @@ header p {
 .tab {
   padding: 10px 16px;
   border-radius: var(--border-radius-sm);
-  background-color: var(--bg-color);
+  background-color: var(--bg-color); /* Use main bg color */
   border: 1px solid var(--border-color);
   color: var(--text-color-secondary);
   font-size: 0.9em;
@@ -291,6 +364,10 @@ header p {
   white-space: nowrap;
   transition: all var(--transition-speed) ease;
 }
+body.dark-mode .tab {
+    background-color: var(--card-bg-color); /* Use card bg for tabs in dark mode */
+}
+
 
 .tab.active {
   background-color: var(--accent-color);
@@ -299,11 +376,18 @@ header p {
   box-shadow: 0 2px 5px rgba(59, 130, 246, 0.3);
   transform: translateY(-1px);
 }
+body.dark-mode .tab.active {
+    box-shadow: 0 2px 5px rgba(59, 130, 246, 0.5); /* Stronger shadow in dark mode */
+}
 
 .tab:hover:not(.active) {
-  background-color: var(--border-color);
+  background-color: var(--border-color); /* Use border color for hover */
   transform: translateY(-1px);
 }
+body.dark-mode .tab:hover:not(.active) {
+    background-color: var(--bg-color); /* In dark mode, use main bg for tab hover for contrast */
+}
+
 
 /* User table card styles */
 .user-table-card {
@@ -352,13 +436,17 @@ td {
 }
 
 th {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* Specific light color */
   font-weight: 600;
   color: var(--text-color-primary);
   position: relative;
   white-space: nowrap;
   transition: background-color var(--transition-speed) ease;
 }
+body.dark-mode th {
+  background-color: #0f172a; /* Specific dark color */
+}
+
 
 .sortable-header {
   cursor: pointer;
@@ -366,7 +454,10 @@ th {
 }
 
 .sortable-header:hover {
-  background-color: #e9ecef;
+  background-color: #e9ecef; /* Specific light color */
+}
+body.dark-mode .sortable-header:hover {
+  background-color: #1e293b; /* Specific dark color */
 }
 
 .sort-indicator {
@@ -386,13 +477,23 @@ tbody tr {
 tbody tr:hover {
   background-color: rgba(59, 130, 246, 0.05);
 }
+body.dark-mode tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.1); /* Slightly more visible hover in dark mode */
+}
+
 
 tbody tr:nth-child(even) {
-  background-color: #f9fafb;
+  background-color: #f9fafb; /* Specific light color */
+}
+body.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(22, 33, 62, 0.7); /* Specific dark color from original */
 }
 
 tbody tr:nth-child(even):hover {
-  background-color: rgba(59, 130, 246, 0.05);
+  background-color: rgba(59, 130, 246, 0.05); /* Ensure hover overrides even row color */
+}
+body.dark-mode tbody tr:nth-child(even):hover {
+  background-color: rgba(59, 130, 246, 0.1); /* Ensure hover overrides even row color in dark mode */
 }
 
 tbody td {
@@ -457,6 +558,10 @@ tbody td {
   border-radius: var(--border-radius-sm);
   display: inline-block;
 }
+body.dark-mode .best-algorithm {
+    background-color: rgba(59, 130, 246, 0.2); /* Darker accent light for dark mode */
+    color: #60a5fa; /* Lighter accent color for text if needed */
+}
 
 /* Highlighted column styles */
 .highlighted-column {
@@ -464,19 +569,30 @@ tbody td {
   border-left: 2px solid var(--accent-color);
   border-right: 2px solid var(--accent-color);
 }
+body.dark-mode .highlighted-column {
+  background-color: rgba(59, 130, 246, 0.1); /* More visible in dark mode */
+}
+
 
 th.highlighted-column {
   background-color: rgba(59, 130, 246, 0.1);
   font-weight: bold;
 }
+body.dark-mode th.highlighted-column {
+  background-color: rgba(59, 130, 246, 0.15); /* More visible in dark mode */
+}
+
 
 /* Empty state */
 .empty-state {
   padding: 40px 30px;
   text-align: center;
-  background-color: #f9fafb;
+  background-color: #f9fafb; /* Specific light color */
   border-radius: var(--border-radius-sm);
   border: 1px dashed var(--border-color);
+}
+body.dark-mode .empty-state {
+  background-color: #1e293b; /* Specific dark color */
 }
 
 .empty-state p {
@@ -494,11 +610,19 @@ th.highlighted-column {
   font-size: 0.9em;
   transition: all var(--transition-speed) ease;
 }
+body.dark-mode .clear-filter-button {
+    background-color: rgba(59, 130, 246, 0.2); /* Darker accent light */
+    color: #60a5fa; /* Lighter accent text */
+}
 
 .clear-filter-button:hover {
   background-color: rgba(59, 130, 246, 0.2);
   transform: translateY(-2px);
 }
+body.dark-mode .clear-filter-button:hover {
+    background-color: rgba(59, 130, 246, 0.3);
+}
+
 
 /* Table footer */
 .table-footer {
@@ -517,6 +641,11 @@ th.highlighted-column {
   padding: 3px 8px;
   border-radius: var(--border-radius-sm);
 }
+body.dark-mode .record-count span {
+    background-color: rgba(59, 130, 246, 0.2); /* Darker accent light */
+    color: var(--text-color-primary);
+}
+
 
 /* Loading and error states */
 .status-message-container {
@@ -580,6 +709,19 @@ th.highlighted-column {
 
 /* Responsive design improvements */
 @media (max-width: 768px) {
+  header.card {
+    flex-direction: column; /* Stack header content and toggle button */
+    gap: 15px;
+  }
+  .header-text-content {
+    order: 1; /* Text content first */
+  }
+  .dark-mode-toggle {
+    order: 2; /* Button second */
+    margin-left: 0; /* Remove margin when stacked */
+    align-self: center; /* Center button */
+  }
+
   .table-header {
     flex-direction: column;
     align-items: flex-start;
@@ -591,7 +733,11 @@ th.highlighted-column {
   }
   
   .search-input {
-    width: calc(100% - 50px);
+    width: calc(100% - 50px); /* Adjust if refresh button is next to it */
+  }
+  body.dark-mode .search-input { /* Ensure dark mode styles apply */
+    background-color: var(--card-bg-color); 
+    color: var(--text-color-primary);
   }
   
   .tabs {
@@ -633,6 +779,10 @@ th.highlighted-column {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-sm);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background-color: var(--card-bg-color); /* Ensure rows use card background */
+  }
+  body.dark-mode tbody tr {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Darker shadow for rows */
   }
   
   tbody td {
@@ -665,13 +815,16 @@ th.highlighted-column {
   }
   
   .highlighted-column {
-    background-color: rgba(59, 130, 246, 0.05);
+    background-color: rgba(59, 130, 246, 0.05); /* Re-apply for specificity */
     border-left: none;
     border-right: none;
     border-top: 2px solid var(--accent-color);
     border-bottom: 2px solid var(--accent-color);
   }
-  
+  body.dark-mode .highlighted-column {
+    background-color: rgba(59, 130, 246, 0.1); /* Dark mode adjustment */
+  }
+
   .collapsible-column {
     display: none;
   }
@@ -687,55 +840,7 @@ th.highlighted-column {
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #1a1a2e;
-    --card-bg-color: #16213e;
-    --text-color-primary: #e2e8f0;
-    --text-color-secondary: #cbd5e0;
-    --text-color-muted: #a0aec0;
-    --border-color: #2d3748;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --shadow-hover-color: rgba(0, 0, 0, 0.4);
-    --success-bg: rgba(22, 163, 74, 0.2);
-    --warning-bg: rgba(217, 119, 6, 0.2);
-    --danger-bg: rgba(220, 38, 38, 0.2);
-  }
-
-  .card {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: rgba(22, 33, 62, 0.7);
-  }
-
-  th {
-    background-color: #0f172a;
-  }
-
-  .sortable-header:hover {
-    background-color: #1e293b;
-  }
-
-  .tab:not(.active) {
-    background-color: #1e293b;
-  }
-
-  .empty-state {
-    background-color: #1e293b;
-  }
-
-  .search-input {
-    background-color: #1e293b;
-    color: var(--text-color-primary);
-  }
-
-  .search-input::placeholder {
-    color: var(--text-color-muted);
-  }
-}
+/* Removed @media (prefers-color-scheme: dark) block as styles are now handled by body.dark-mode */
 
 /* Animation for table rows */
 @keyframes fadeIn {
