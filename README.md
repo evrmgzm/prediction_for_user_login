@@ -88,5 +88,14 @@ kullanici-giris-tahmin/
 ├── README.md
 └── package.json
 ```
+#### 6. Ekran görüntüleri
+![image](https://github.com/user-attachments/assets/2784f9fe-e9c0-4fbf-827c-912ed57dff47)
+---
+![image](https://github.com/user-attachments/assets/e7097810-3de5-41d6-b677-4a61ea8fe09f)
+---
+![image](https://github.com/user-attachments/assets/b96e4791-9761-4fcb-8d25-764b0cba4e70)
+---
+![image](https://github.com/user-attachments/assets/f1f95109-5c40-404d-9298-5e992f03fbd3)
+
 
 #### Uygulamaya buradan ulaşabilirsiniz : https://prediction-for-user-login.vercel.app
